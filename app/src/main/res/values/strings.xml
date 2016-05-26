@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">BarFinderWithMapsAndPlaces</string>
+
+    <!-- Must be in different xml and also in .gitignore but it's placed here for the demo -->
+    <string name="browser_key"> AIzaSyCDoTtGy7iQD3_6cbwqYDWsmB82gzUdLF8 </string>
+
+    <string name="android_maps_key">AIzaSyAMAj9Qd1I60jgjtjHB6FpQUM02mwSwTOw</string>
+
+    <string name="metric">%s m</string>
+    <string name="please_turn_on_gps">Please turn on your GPS</string>
+</resources>
