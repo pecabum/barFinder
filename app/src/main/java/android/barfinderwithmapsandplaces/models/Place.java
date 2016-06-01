@@ -5,43 +5,48 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 
-public class Place implements Parcelable{
+public class Place implements Parcelable {
 
-    private double lat;
-    private double lng;
-    private String id;
-    private String name;
-    private String placeId;
-    private String reference;
-    private String rating;
-    private int distance;
-
-    public Place(double lat, double lng, String id, String name, String placeId, String reference, String rating, int distance) {
-        this.lat = lat;
-        this.lng = lng;
-        this.id = id;
-        this.name = name;
-        this.placeId = placeId;
-        this.reference = reference;
-        this.rating = rating;
-        this.distance = distance;
+    public Geometry getGeometry() {
+        return geometry;
     }
 
-    public Place(Parcel in) {
+    public void setGeometry(Geometry geometry) {
+        this.geometry = geometry;
+    }
+
+    private Geometry geometry;
+    private String id;
+    private String name;
+    private String place_id;
+    private String rating;
+
+    private int distance;
+
+    protected Place(Parcel in) {
+        geometry = in.readParcelable(Geometry.class.getClassLoader());
+        id = in.readString();
         name = in.readString();
-        id = in.readString();
-        placeId = in.readString();
-        reference = in.readString();
+        place_id = in.readString();
         rating = in.readString();
-        id = in.readString();
-        lat = in.readDouble();
-        lng =in.readDouble();
         distance = in.readInt();
     }
 
+    public static final Creator<Place> CREATOR = new Creator<Place>() {
+        @Override
+        public Place createFromParcel(Parcel in) {
+            return new Place(in);
+        }
 
-    public double getLat() {
-        return lat;
+        @Override
+        public Place[] newArray(int size) {
+            return new Place[size];
+        }
+    };
+
+
+    public void setDistance(int distance) {
+        this.distance = distance;
     }
 
     public String getName() {
@@ -50,10 +55,6 @@ public class Place implements Parcelable{
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public double getLng() {
-        return lng;
     }
 
     public String getId() {
@@ -70,39 +71,23 @@ public class Place implements Parcelable{
 
     public Location getLocation() {
         Location placeLocation = new Location(name);
-        placeLocation.setLatitude(lat);
-        placeLocation.setLongitude(lng);
+        placeLocation.setLatitude(geometry.getLocation().getLat());
+        placeLocation.setLongitude(geometry.getLocation().getLng());
         return placeLocation;
     }
 
+    @Override
     public int describeContents() {
         return 0;
     }
 
     @Override
-    public String toString() {
-        return name + ": " + name;
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(geometry, flags);
+        dest.writeString(id);
+        dest.writeString(name);
+        dest.writeString(place_id);
+        dest.writeString(rating);
+        dest.writeInt(distance);
     }
-
-    public void writeToParcel(Parcel out, int flags) {
-        out.writeString(name);
-        out.writeString(id);
-        out.writeString(placeId);
-        out.writeString(reference);
-        out.writeString(rating);
-        out.writeString(rating);
-        out.writeDouble(lat);
-        out.writeDouble(lng);
-        out.writeInt(distance);
-    }
-
-    public static final Parcelable.Creator<Place> CREATOR = new Parcelable.Creator<Place>() {
-        public Place createFromParcel(Parcel in) {
-            return new Place(in);
-        }
-
-        public Place[] newArray(int size) {
-            return new Place[size];
-        }
-    };
 }

@@ -141,9 +141,9 @@ public class PlacesMapFragment extends Fragment {
 
             for (int i = 0; i < placeList.size(); i++) {
                 Place place = placeList.get(i);
-
+                Location placeLocation = place.getLocation();
                 map.addMarker(new MarkerOptions()
-                        .position(new LatLng(place.getLat(), place.getLng()))
+                        .position(new LatLng(placeLocation .getLatitude(), placeLocation .getLongitude()))
                         .snippet("Distance : " + place.getDistance() + "m"))
                         .setTitle(place.getName());
             }

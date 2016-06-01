@@ -26,6 +26,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -88,6 +89,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     protected void onStart() {
         super.onStart();
     }
+
     /**
      *
      */
@@ -134,6 +136,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     /**
      * Getting places - the call must be in specific class but for the demo and because is just one
      * single call so i placed it inside the activity
+     *
      * @param url
      * @param location
      */
@@ -145,49 +148,23 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                     @Override
                     public void onResponse(JSONObject response) {
                         Log.d(TAG, "onResponse: " + response);
-                        String nextPageToken;
-                        double lat;
-                        double lng;
-                        String id;
-                        String name;
-                        String placeId;
-                        String reference;
-                        String rating;
-
-                        //TODO If it has pagination load the remaining places
-                        try {
-                            nextPageToken = response.getString("next_page_token");
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
 
                         try {
                             JSONArray jArray = response.getJSONArray("results");
                             placeList = new ArrayList<>(jArray.length());
                             for (int i = 0; i < jArray.length(); i++) {
-                                JSONObject jObject = jArray.getJSONObject(i);
-
-                                // It might be parsed with Gson , but i prefer this way for the demo
-                                lat = jObject.getJSONObject("geometry").getJSONObject("location").getDouble("lat");
-                                lng = jObject.getJSONObject("geometry").getJSONObject("location").getDouble("lng");
-                                id = jObject.optString("id");
-                                name = jObject.optString("name");
-                                placeId = jObject.optString("place_id");
-                                rating = jObject.optString("rating");
-                                reference = jObject.optString("reference");
-
-                                Location placeLocation = new Location("Place");
-                                placeLocation.setLatitude(lat);
-                                placeLocation.setLongitude(lng);
-
-                                int distance = (int) location.distanceTo(placeLocation);
-
-                                Place place = new Place(lat, lng, id, name, placeId, rating, reference, distance);
-                                placeList.add(place);
-
-                                ((PlacesMapFragment) adapter.getItem(1)).loadMap(placeList, location);
-                                ((PlacesListFragment) adapter.getItem(0)).loadData(placeList);
+                                try {
+                                    Gson gson = new Gson();
+                                    Place place = gson.fromJson(jArray.get(i).toString(), Place.class);
+                                    place.setDistance((int) location.distanceTo(place.getLocation()));
+                                    placeList.add(place);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
                             }
+
+                            ((PlacesMapFragment) adapter.getItem(1)).loadMap(placeList, location);
+                            ((PlacesListFragment) adapter.getItem(0)).loadData(placeList);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
