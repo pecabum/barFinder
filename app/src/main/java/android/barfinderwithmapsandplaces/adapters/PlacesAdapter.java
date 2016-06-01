@@ -24,8 +24,7 @@ public class PlacesAdapter extends RecyclerView.Adapter<RecyclerViewHolder> {
     public RecyclerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         View layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_place_item, null);
-        RecyclerViewHolder rcv = new RecyclerViewHolder(layoutView);
-        return rcv;
+        return new RecyclerViewHolder(layoutView);
     }
 
     @Override
@@ -34,6 +33,7 @@ public class PlacesAdapter extends RecyclerView.Adapter<RecyclerViewHolder> {
         holder.placeName.setText(itemList.get(position).getName());
         holder.placeDistance.setText(String.format(context.getString(R.string.metric), Integer.toString(itemList.get(position).getDistance())));
         holder.mainView.setTag(itemList.get(position).getLocation());
+
     }
 
     @Override

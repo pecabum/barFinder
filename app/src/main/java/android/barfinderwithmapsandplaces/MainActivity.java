@@ -37,6 +37,8 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity implements LocationListener {
 
     public static final String TAG = MainActivity.class.getSimpleName();
+    private static final long MIN_TIME_UPDATE = 5000;
+    private static final float MIN_DISTANCE_UPDATE = 1000;
 
     private ArrayList<Place> placeList;
     private ViewPagerAdapter adapter;
@@ -65,17 +67,11 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     private void enableLocation() {
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
-        final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-
-        }
-
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
 
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 1000, this);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_UPDATE, MIN_DISTANCE_UPDATE, this);
 
         Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
@@ -157,7 +153,11 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                                     Gson gson = new Gson();
                                     Place place = gson.fromJson(jArray.get(i).toString(), Place.class);
                                     place.setDistance((int) location.distanceTo(place.getLocation()));
+
+                                    // here must be an algorithm for best performance that remove only places which doesn't exist
+                                    // in the new response and add only the newest to the group
                                     placeList.add(place);
+
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }

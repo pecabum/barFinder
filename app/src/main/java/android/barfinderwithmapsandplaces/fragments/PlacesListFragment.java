@@ -16,6 +16,7 @@ import java.util.ArrayList;
 
 public class PlacesListFragment extends Fragment {
     private static final String KEY_LIST = "list";
+
     private RecyclerView rvPlaces;
     private ArrayList<Place> placesList;
     private PlacesAdapter rcAdapter;
@@ -23,6 +24,7 @@ public class PlacesListFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if(savedInstanceState == null || !savedInstanceState.containsKey(KEY_LIST)) {
             placesList = new ArrayList<>();
         }
